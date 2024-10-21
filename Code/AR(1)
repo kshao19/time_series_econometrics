@@ -1,1 +1,65 @@
+# Import the required packages
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import norm
 
+# create a new class initialized with 3 attributes: rho, mu, sig
+class AR1_process:
+    def __init__(self, rho, mu, sig):
+        self.rho, self.mu, self.sig =  rho, mu, sig # initializing a set of vectors
+
+    def stat_dist(self, Nx):
+        #compute the mean and variance of normal distribution
+        mu_stat =  self.mu/(1-self.rho)
+        var_stat = self.sig**2/(1-self.rho**2)
+        self.mu_stat = mu_stat #store them as an attribute in class
+        self.var_stat = var_stat
+
+        #create x_vec
+        xmin = self.mu_stat - 5*(self.var_stat**0.5)
+        xmax = self.mu_stat + 5*(self.var_stat**0.5)
+        x_vec = np.linspace(xmin, xmax, num=Nx)
+        #create pdf
+        pdf_x = norm.pdf(x_vec,loc=self.mu_stat,scale=self.var_stat**0.5)
+
+        return x_vec
+
+    def dist_seq(self, z0, Nt, x_vec):
+        mu_vec = np.zeros(Nt)
+        mu_vec[0] = z0 #the state of the first period is given: the expected value of a constant is the constant  
+        var_vec = np.zeros(Nt)
+        var_vec[0] = 0 #the varaince of a constant is zero 
+        pdf_mat = np.zeros((Nx,Nt))
+
+        #step 1: compute z1 
+        mu_vec[1] = self.rho*z0 + self.mu
+        var_vec[1] = self.sig**2
+        pdf_mat[:,1] = norm.pdf(x_vec, loc=mu_vec[1], scale=self.sig)
+
+        #step2: compute z2...Zt
+        i= 1
+        while i < Nt-1:
+          mu_vec[i+1] = self.rho*mu_vec[i] + self.mu
+          var_vec[i+1] = self.rho**2*var_vec[i]+ self.sig**2
+          pdf_mat[:,i+1] = norm.pdf(x_vec, loc=mu_vec[i+1], scale=var_vec[i+1]**0.5)
+          i+=1
+        
+        return mu_vec, var_vec, pdf_mat 
+
+    def sample_path(self, z0, Nt):
+        #create an epsilon of Nt random numbers drawn from the normal distribution 
+        #create the random variable 
+        eps = norm.rvs(loc=self.mu, scale=self.sig, size=Nt) #scale indicates the standard deviation 
+
+        #create a sample path for states 
+        zt = np.zeros(Nt)
+        zt[0] = z0
+
+        #if Nt > 1: 
+        #for j in range(1,100):
+        j=1
+        while j < Nt:
+          zt[j]=self.rho*zt[j-1]+eps[j]
+          j+=1     
+
+        return zt  
