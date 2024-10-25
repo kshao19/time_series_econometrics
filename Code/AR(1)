@@ -63,3 +63,107 @@ class AR1_process:
           j+=1     
 
         return zt  
+
+# Defined the parameters for the AR1
+rho = 0.9
+mu = 0.1
+sig = 0.5
+Nt=100
+z0=0
+
+# create the AR1 process 
+AR_1 = AR1_process(rho=rho, mu=mu, sig=sig)
+
+# calculate the actual mean and variance from an AR(1) process using the parameters defined in the README
+# create unconditional stationary distribution 
+x_vec = AR_1.stat_dist(Nt)
+#obtain dist_seq
+mu_vec, var_vec, pdf_mat = AR_1.dist_seq(z0, Nt, x_vec)
+
+# calculate the approximated mean and variance from an AR(1) process using the parameters defined in the README
+# generate my sample path 
+zt = AR_1.sample_path(z0=z0, Nt=Nt)
+
+#step1: simulate Ns=100,000 sample paths, each for 100 periods 
+Ns_2=100000
+sample_path3 = np.zeros((Ns_2, Nt))
+i=0
+while i < Ns_2: 
+  sample_path3[i,:] = AR_1.sample_path(z0=z0, Nt=Nt)
+  i+=1
+
+#step2: find the cross sectional mean for each period 
+mu_t = np.zeros((Nt))
+var_t = np.zeros((Nt))
+temp= np.zeros((Ns_2))
+
+i = 0 
+while i < Nt: 
+  mu_t[i] = sample_path3[:,i].sum()/Ns_2
+
+  for j,k in enumerate(temp):
+    temp[j]= (sample_path3[j,i]-mu_t[i])**2 
+
+  var_t[i] = temp.sum()/Ns_2
+
+  i+=1
+
+#Find PDF  
+#create the dimension for pdf
+pdf_xj = np.zeros((Nx, Nt))
+delt_xj = (x_vec.max()-x_vec.min())/(Nx-1)
+denom = delt_xj*Ns_2
+
+#for each period t=0,....,t=100
+i=0
+while i < Nt:
+#for each xj-1 and xj, find the # of z inside 
+    n0 = np.sum(sample_path3[:,i] <= x_vec[0])
+    pdf_xj[0,i] = n0/denom
+
+    n_nx = np.sum(sample_path3[:,i] > x_vec[99])
+    pdf_xj[99,i] = n_nx/denom      
+
+    j=1
+    while j < 99:
+      test = (x_vec[j-1] < sample_path3[:,i]) & (sample_path3[:,i] <= x_vec[j])
+      n = np.sum(test)
+      pdf_xj[j,i] = n/denom 
+      j+=1
+
+    i+=1
+
+# Plot the actual and approximated unconditional means and variances. 
+fig, (ax1, ax2)= plt.subplots(1, 2,figsize=(12,10))
+
+ax1.set_title("Actual Unconditional Means and Variances")
+ax1.plot(mu_vec,label="Mean")
+ax1.plot(var_vec, label = "Variance")
+ax1.legend()
+ax1.grid()
+
+ax2.set_title("Approximated Unconditional Means and Variances")
+ax2.plot(mu_t,label="Mean")
+ax2.plot(var_t,label = "Variance")
+ax2.legend()
+ax2.grid()
+
+# Plot the actual and approximated unconditional pdfs. 
+fig, (ax1, ax2)= plt.subplots(1, 2,figsize=(12,10))
+
+i=1
+ax1.set_title("Actual PDF")
+while i < 100: 
+  ax1.plot(x_vec,pdf_mat[:,i],color="orange",alpha=i*0.5)
+  i+=1
+#ax1.legend()
+ax1.grid()
+
+i=1
+ax2.set_title("Approximated PDF")
+while i < 100: 
+  ax2.plot(x_vec,pdf_xj[:,i],color="blue",alpha=i*0.5)
+  i+=1
+ax2.grid()
+
+
