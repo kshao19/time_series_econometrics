@@ -94,8 +94,8 @@ For each period $t=0,...,T$,
 ##### Part 3
 This subsection provides pseudocode to compute the stationary mean and variance from the simulated sample path and compares with the cross-sectional approximated and actual mean and variance from the last period of the sequence. 
 
-I used the sample path starting at $t=50$ to $N_t$. The stationary mean and variance are calculated as the following:
-- $\Tilde{mu} = 
+I used the sample path starting at $t=50$ to $N_t$, where $\tilde{N} = N_t - 50 +1$. The stationary mean and variance are calculated as the following:
+- $\tilde{\mu} = \frac{1}{\tilde{N}} \sum^{N_t}_{t=50} Z_t$
 
 
 ##### Part 4: Comparison of the Results
