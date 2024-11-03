@@ -91,7 +91,14 @@ For each period $t=0,...,T$,
 
 <br/>
 
-##### Part 3: Comparison of the Results
+##### Part 3
+This subsection provides pseudocode to compute the stationary mean and variance from the simulated sample path and compares with the cross-sectional approximated and actual mean and variance from the last period of the sequence. 
+
+I used the sample path starting at $t=50$ to $N_t$. The stationary mean and variance are calculated as the following:
+- $\Tilde{mu} = 
+
+
+##### Part 4: Comparison of the Results
 
 ![image](https://github.com/user-attachments/assets/147c0a76-5c73-4c82-a09f-1e9ee174b953)
 
