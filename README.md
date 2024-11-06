@@ -91,16 +91,39 @@ For each period $t=0,...,T$,
 
 <br/>
 
-##### Part 3
-This subsection provides pseudocode to compute the stationary mean and variance from the simulated sample path and compares with the cross-sectional approximated and actual mean and variance from the last period of the sequence. 
-
-I used the sample path starting at $t=50$ to $N_t$, where $\tilde{N} = N_t - 50 +1$. The stationary mean and variance are calculated as the following:
-- $\tilde{\mu} = \frac{1}{\tilde{N}} \sum^{N_t}_{t=50} Z_t$
-
-
-##### Part 4: Comparison of the Results
+##### Part 3: Comparison of the Results
 
 ![image](https://github.com/user-attachments/assets/147c0a76-5c73-4c82-a09f-1e9ee174b953)
 
 ![image](https://github.com/user-attachments/assets/625c1918-abc4-41c9-af02-5304cb2b1845)
+
+<br/>
+
+##### Part 4
+This subsection provides pseudocode to compute the stationary mean and variance from the simulated sample path and compares with the cross-sectional approximated ($\widehat{\mu_{99}}$, $\widehat{\sigma_{99}}$) and actual ($\mu_{99}$, $\sigma_{99}$) mean and variance from the last period of the sequence. 
+
+I used the sample path starting at $t=50$ to $N_t$, where $\tilde{N} = N_t - 50 +1$. The stationary mean, variance, and pdf are calculated as the following:
+- The mean: $\tilde{\mu} = \frac{1}{\tilde{N}} \sum^{N_t}_{t=50} z_t$
+- The variance: $\tilde{\sigma} = \frac{1}{\tilde{N}} \sum^{N_t}_{t=50} (z_t - \tilde{\mu})^2 $
+- The pdf, for each $x_j \in x_{vec}$:
+- 
+  - if $x_j$ is not $x_0$ or $x_{N_{x-1}}$, for $x_{j-1} < z_t(i) \leq x_j$:
+  
+    $\widetilde{pdf_t}(x_j) = \frac{1}{\Delta x_j} \frac{1}{\tilde{N}}  \sum^{N_s}_{i=50} 1$ 
+
+  - if $x_j = x_0$, for $z_t(i) \leq x_0$:
+
+    $\widetilde{pdf_t}(x_0) = \frac{1}{\Delta x_j} \frac{1}{\tilde{N}}  \sum^{N_t}_{i=50} 1$ 
+
+  - if $x_j = x_{N_x-1}$, for $x_{N_x-1} \geq z_t(i)$:
+
+    $\widetilde{pdf_t}(x_{N_x-1}) = \frac{1}{\Delta x_j} \frac{1}{\tilde{N}}  \sum^{N_t}_{i=50} 1$
+
+  - For linearly spaced vector, $\Delta x_j = \frac{x_{max}-x_{min}}{N_x-1}$   
+
+<br/>
+
+##### Part 5: Results
+
+
 
