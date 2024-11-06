@@ -166,4 +166,39 @@ while i < 100:
   i+=1
 ax2.grid()
 
+# compute the stationary mean and variance from the simulated sample path
+# step1: simulate Nt=100,000 sample paths, each for 100 periods 
+Nt_2 = 100000
+sample_path4 = np.zeros(Nt_2)
+sample_path4 = AR_1.sample_path(z0=z0, Nt=Nt_2)
 
+# step2: find the cross sectional mean for each period 
+temp_2= np.zeros((Nt_2))
+N_til = Nt_2-50+1
+mu_t2 = sample_path4.sum()/N_til 
+for j,z in enumerate(sample_path4):
+  temp_2[j]= (z-mu_t2)**2
+var_t2 = temp_2.sum()/Nt_2
+
+# Find PDF  
+# create the dimension for pdf
+pdf_xj_2 = np.zeros((Nx))
+denom_2 = delt_xj*N_til
+# for each xj-1 and xj, find the # of z within
+pdf_xj_2[0] = np.sum(sample_path4 <= x_vec[0])/denom_2
+pdf_xj_2[99] = np.sum(sample_path4 > x_vec[99])/denom_2            
+j=1
+while j < 99:
+  test = (x_vec[j-1] < sample_path4) & (sample_path4 <= x_vec[j])
+  pdf_xj_2[j] = np.sum(test)/denom_2
+  j+=1  
+
+# Comparison of results 
+print("\tilde{\mu}: " + str(mu_t2))
+print("\tilde{\sigma}: " + str(var_t2))
+
+print("\mu_{99}: " + str(mu_vec[99]))
+print("\sigma_{99}: " + str(var_vec[99]))
+
+print("\widehat{\mu_{99}: " + str(mu_t[99]))
+print("\widehat{\sigma_{99}: " + str(var_t[99]))
