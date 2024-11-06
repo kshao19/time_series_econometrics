@@ -8,6 +8,7 @@
 - [2. Mean and Variance of AR(1) from Monte Carlo Simulation](#2-mean-and-variance-of-ar1-from-monte-carlo-simulation)
 - [3. Theory and Approximation Result Comparison](#3-theory-and-approximation-result-comparison)
 - [4. Examine Stationarity and Ergodicity of AR(1)](#4-examine-stationarity-and-ergodicity-of-ar1)
+  
   -[Results](#results) 
 
 <br/>
