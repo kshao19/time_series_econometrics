@@ -6,10 +6,9 @@
 - [Introduction to Autoregressive Model AR(1)](#introduction-to-autoregressive-model-ar1)
 - [1. Mean and Variance of AR(1) from Theory](#1-mean-and-variance-of-ar1-from-theory)
 - [2. Mean and Variance of AR(1) from Monte Carlo Simulation](#2-mean-and-variance-of-ar1-from-monte-carlo-simulation)
-- [3. Theory and Approximation Result Comparison](3-theory-and-approximation-result-comparison)
-- [4. Examine Stationarity and Ergodicity of AR(1)](4-examine-stationarity-and-ergodicity-of-ar1)
-
-  -[Results](results) 
+- [3. Theory and Approximation Result Comparison](#3-theory-and-approximation-result-comparison)
+- [4. Examine Stationarity and Ergodicity of AR(1)](#4-examine-stationarity-and-ergodicity-of-ar1)
+  -[Results](#results) 
 
 <br/>
 
@@ -37,7 +36,7 @@ To start, let the AR(1) process be defined by the following variables:
 
 <br/>
 
-#### 1. Mean and Variance of AR(1) from Theory
+### 1. Mean and Variance of AR(1) from Theory
 This subsection computes the **actual mean and variance** of an AR(1) process by constructing **a sequence of unconditional distribution for the AR1** (see method *"dist_seq"* defined under the class *"AR1_process"* in the code section). 
 
 The first step is to normalize the stationary distribution and compute the mean $\mu_{stat}$ and variance $\sigma^2_{stat}$:
