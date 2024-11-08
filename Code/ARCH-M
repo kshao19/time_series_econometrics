@@ -1,1 +1,11 @@
+# Import and Set up the data
+setwd("Enter your pathhere")
+tbdata.df <-read.csv("treasury_rates.csv", sep = ",", header = TRUE, stringsAsFactors = FALSE)
+
+td = seq(as.Date("1984/1/1"), as.Date("2008/1/1"), "1 month") # Defines time
+MO3.zoo<-zoo(x=tbdata.df$GS3M, order.by=td)
+MO6.zoo<-zoo(x=tbdata.df$GS6M, order.by=td)
+treasury.zoo<-cbind(MO3.zoo, MO6.zoo)
+names(treasury.zoo) <- c("MO3","MO6")
+premium.zoo<-2*MO6.zoo-MO3.zoo-lag(MO3.zoo, k=3)
 
