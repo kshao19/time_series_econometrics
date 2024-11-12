@@ -9,3 +9,29 @@ treasury.zoo<-cbind(MO3.zoo, MO6.zoo)
 names(treasury.zoo) <- c("MO3","MO6")
 premium.zoo<-2*MO6.zoo-MO3.zoo-lag(MO3.zoo, k=3)
 
+#plot both series on the same graph
+plot(treasury.xts, screens = factor(1, 1), auto.legend=TRUE,
+main="3- and 6-month Treasury security rates")
+addLegend(legend.loc = "topright", legend.names = c("3-month Treasury Rates", "6-month Treasury Rates"),lty=c(1, 1), lwd=c(2,1))
+
+#BIC test
+#get less parameters, see residuals if they look like white noise
+#start with BIC
+auto.arima(premium.zoo, max.p=10,max.q=10, stepwise=FALSE, allowmean= TRUE, approximation=FALSE, ic=c("bic"), stationary = TRUE, seasonal = FALSE)
+
+#create the GARCH model without ARCH-M effect
+modN1<-ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(1, 1)),
+        mean.model = list(armaOrder = c(1, 2),
+        include.mean = TRUE, archm = FALSE),
+        distribution.model = "norm")
+
+#fit the GARCH model without ARCH-M effect
+modN1est<-ugarchfit(modN1, premium.zoo)
+show(modN1est)
+
+#create the GARCH model with the ARCH-M effect
+modGED2<-ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(1, 1)),
+                    mean.model = list(armaOrder = c(1, 2), include.mean = TRUE, archm = TRUE),
+                    distribution.model = "ged")
+modGED2est<-ugarchfit(modGED2, premium.zoo)
+show(modGED2est)
