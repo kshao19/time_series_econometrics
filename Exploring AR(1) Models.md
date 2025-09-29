@@ -1,4 +1,4 @@
-# Exploring AR(1) Time Series: Theory, Simulation, and Assumption Testing
+# Exploring AR(1) Time Series: Theory, Simulation, and Assumption Testing with Monte Carlo Simulation
 ## This mini project programmatically approximates and tests the assumptions used to construct an AR(1) model. I (i) derive the theoretical mean/variance, (ii) approximate them via Monte Carlo simulation, (iii) compare theory vs. approximation, and (iv) examine stationarity and ergodicity empirically.
 
 ## Table of Contents
