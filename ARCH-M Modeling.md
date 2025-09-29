@@ -1,5 +1,7 @@
-# ARCH-M
-## This is a project that programmatically replicates the ARCH-M Model of the excess return to holding 6-month Treasury Bill in Engle, Lilien, and Robins paper 
+# ARCH-M: Modeling Risk Premia in Treasury Bills
+## This project programmatically replicates the ARCH-M model of the excess return to holding 6-month Treasury Bills as presented in Engle, Lilien, and Robins (1987), *Estimating Time Varying Risk Premia in the Term Structure: The ARCH-M Model*.
+
+- I test whether the conditional variance of returns helps explain the risk premia in the term structure using U.S. Treasury data.
 
 ## Table of Contents
 - [Tool](#tool)
@@ -17,9 +19,24 @@ The R code to reproduce all results in this file can be found [here](https://git
 <br/>
 
 ###  Introduction to ARCH-M
-ARCH-M stands for Autoregressive Conditional Heteroskedasticity Mean Model, which specifies that the mean of a series is a function of its conditional variance. This model assumes that the variance of $y_t$ is conditional on the variance of $y_{t-1}$. In the case of financial market, ARCH-M assumes that the return on investments also depend on the risk.
+ARCH-M stands for Autoregressive Conditional Heteroskedasticity Mean Model. It extends ARCH/GARCH by allowing the conditional vartiance of aa time series to enter its mean equation. This model assumes that the variance of $y_t$ is conditional on the variance of $y_{t-1}$. 
 
-This project replicates part of the results in Engle, Lilien, and Robins' (1987) paper ["Estimating time varying risk premia in the term structure: the ARCH-M model"](https://www.jstor.org/stable/1913242). It tests the effectiveness of ARCH-M in modeling the risk premiums of holding long rates bonds. 
+In the case of financial market, ARCH-M captures the idea that risk premia (excess returns) may depend on the conditional volatility of returns. Specifically:
+
+$$
+\begin{align}
+y_t = \mu + \lambda \sqrt(h_t) + \epsilon_t, \ \epsilon_t|\mathcal{F}+{t-1} \sim \mathcal{N}(0, h_t) \\
+h_t = \alpha_0 + \alpha_1\epsilon^2_{t-1} + \beta_1h_{t-1}
+\end{align}
+$$
+
+- $y_t$ = excess return (risk premium)
+- $h_t$ = conditional variance
+- $\lambda$ = measures the risk-return tradeoff (risk premium effect)
+
+If  $\lambda \neq 0$, higher conditional variance is associated with higher expected excess returns.
+
+I replicates part of the results in Engle, Lilien, and Robins' (1987) paper ["Estimating time varying risk premia in the term structure: the ARCH-M model"](https://www.jstor.org/stable/1913242). It tests the effectiveness of ARCH-M in modeling the risk premiums of holding long rates bonds. 
 
 Let $R_t$ be the yield on 6-month Treasury Bills observed in month $t$ (annualized to precentage) and $r_t$ be that on 3-month Treasury Bills. Given the term structure of interest rates, long rates (i.e., the 6-month treasury bills) are the averages of expected future short rates. By that, the excess holding (i.e., risk premium) is given by $y_t = 2R_t - r_{t+3} - r_t$
 
@@ -33,7 +50,7 @@ The data set "treasury_rates.csv" is available [here](https://github.com/kshao19
 <br/>
 
 ### Estimation using GARCH with and without ARCH-M Effect
-I used the Generalized AutoRegressive Conditional Heteroskedasticity (GARCH) model for $y_t$. Using the BIC test, I found that the mean model of the historical values of the risk premium is an ARMA(1,2).
+I use the Generalized AutoRegressive Conditional Heteroskedasticity (GARCH) model for $y_t$. Using the BIC test, I found that the mean model of the historical values of the risk premium is an ARMA(1,2).
 ![image](https://github.com/user-attachments/assets/38812d75-eba7-4e14-9aaf-648961ee0b02)
 
 I first fitted a GARCH model **without** ARCH-M effect, i.e., assuming the reward does not depend on the risk. Therefore, I assume that the $y_t$ has a standard normal distribution as that of the underlying shock.
@@ -49,14 +66,14 @@ The results are intuitive as it suggests that given the risks of holding the tre
 
 <br/>
 
-I then fitted a GARCH model **with** ARCH-M effect, i.e., assuming the risk premium increase with the length of the treasury bill.
+As a robustness check, I then fit a GARCH model **with** ARCH-M effect, i.e., assuming the risk premium increase with the length of the treasury bill.
 
 #### Result:
 - Adding the ARCH-M gives statistically significant parameters under significance level α = 0.05 for standard error, except for the intercept of my ARMA model and the intercept of my GARCH part. But the model gives all statistically significant parameters under significance level α = 0.05 when adjusted for robust standard error.
 - The Ljung-Box test on standardized residuals yields p-values that are all greater than α = 0.1. Therefore, we will fail to reject the null hypothesis that there is no serial correlations among the residuals, and these results show that the residuals are white noises.
 - The weighted ARCH LM tests, with lag = 3,5, or 7, yield statistically insignificant results, through which we will fail to reject the null hypothesis of adequately fitted ARCH process, and it shows that all ARCH behaviors are captured.
 - For the goodness of fit models, p-value for the sub interval of group 30 is statistically significant under the significance level α = 0.05, through which I will have to reject the null that the distribution of Zt is a generalized error distribution. For the test of other sub intervals, although the p-values are small, they are all statistically insignificant under the significance level α = 0.05. My shape parameter is 1.14, hence, the generalized error distribution is still an appropriate assumption here.
-- Finally, I will continue to fail to reject the null hypothesis in the sign bias tests that the data is symmetric. Therefore, there is no differentiation between positive news or negative news.
+- Finally, I continue to fail to reject the null hypothesis in the sign bias tests that the data is symmetric. Therefore, there is no differentiation between positive news or negative news.
 
 
 
